@@ -7,7 +7,7 @@ from tkinter import ttk
 
 
 # изменение метки криптовалюты при выборе из комбобокса
-def update_t_label(event):
+def update_cr_label(event):
     cr_code = cr_combobox.get()
     cr_name = cr_cur[cr_code]
     cr_label.config(text = cr_name)
@@ -66,7 +66,7 @@ def exchange():
 
 
 
-# переменная для определения курса валют по отношению к доллару
+# список криптовалют
 cr_cur = {
     'BTC': 'Bitcoin',
     'ETH': 'Ethereum',
@@ -79,7 +79,6 @@ cr_cur = {
     'DOGE': 'Dogecoin',
     'ADA': 'Cardano'
 }
-
 
 
 # Интерфейс
