@@ -6,16 +6,23 @@ from tkinter import messagebox as mb
 from tkinter import ttk
 
 
-# Зашить неотображаемую функцию перевода USD в 9 любых базовых валют
+# изменение метки криптовалюты при выборе из комбобокса
+def update_t_label(event):
+    cr_code = cr_combobox.get()
+    cr_name = cr_cur[cr_code]
+    cr_label.config(text = cr_name)
+
+
+# Зашить неотображаемую функцию перевода USD в 10 любых базовых валют
 # изменение метки валюты при выборе из комбобокса
 def update_t_label(event):
     t_code = t_combobox.get()
     t_name = t_cur[t_code]
     t_label.config(text = t_name)
 
+
 # функция курса валют по отношению к доллару
 # для возможности определения стоимости криптовалюты в других валютах
-
 def hidden_exchange_rate():
     t_code = t_combobox.get()
 
@@ -36,6 +43,7 @@ def hidden_exchange_rate():
     else:
         mb.showwarning("Внимание", "Введите код валюты!")
 
+
  # переменная для определения курса валют по отношению к доллару
 t_cur = {
     'RUB': 'Российиский рубль',
@@ -50,6 +58,14 @@ t_cur = {
     'AED': 'Дирхам ОАЭ',
     'CAD': 'Канадский доллар',
 }
+
+
+# def exchange():
+#     hidden_exchange_rate()
+
+
+
+
 
 # Интерфейс
 root = Tk()
