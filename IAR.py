@@ -4,7 +4,13 @@ import pprint
 from tkinter import *
 from tkinter import messagebox as mb
 from tkinter import ttk
+from pycoingecko import CoinGeckoAPI
 
+cg = CoinGeckoAPI(api_key="	CG-4JzufRVariWoroFZbvmtDhob")
+
+# просто пример получения цены дял биткоина, потом удалить
+# price_data = cg.get_price(ids='bitcoin', vs_currencies='usd')
+# print(price_data) # Вывод: {'bitcoin': {'usd': 19337.76}}
 
 # изменение метки криптовалюты при выборе из комбобокса
 def update_cr_label(event):
@@ -62,6 +68,9 @@ t_cur = {
 
 def exchange():
     hidden_exchange_rate()
+    cr_code = cr_combobox.get()
+
+
 
 
 
@@ -83,11 +92,11 @@ cr_cur = {
 
 # Интерфейс
 root = Tk()
-root.title(text="Курсы криптовалют")
-root.geometry("400x350")
+root.title("Курсы криптовалют")
+root.geometry("400x250")
 
 # выбор криптовалюты, курс которой требуется узнать
-ttk.Label(text = "Криптовалюта").pack(padx=10, pady=5)
+ttk.Label(text = "Криптовалюта").pack(padx=10, pady=10)
 
 cr_combobox = ttk.Combobox(values = list(cr_cur.keys()))
 cr_combobox.pack(padx=10, pady=5)
