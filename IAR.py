@@ -44,7 +44,7 @@ def hidden_exchange_rate():
         mb.showwarning("Внимание", "Введите код валюты!")
 
 
- # переменная для определения курса валют по отношению к доллару
+# переменная для определения курса валют по отношению к доллару
 t_cur = {
     'RUB': 'Российиский рубль',
     'USD': 'Американский доллар',
@@ -60,10 +60,25 @@ t_cur = {
 }
 
 
-# def exchange():
-#     hidden_exchange_rate()
+def exchange():
+    hidden_exchange_rate()
 
 
+
+
+# переменная для определения курса валют по отношению к доллару
+cr_cur = {
+    'BTC': 'Bitcoin',
+    'ETH': 'Ethereum',
+    'USDT': 'Tether',
+    'XRP': 'XRP',
+    'BNB': 'BNB',
+    'SOL': 'Solana',
+    'USDC': 'USDC',
+    'TRX': 'TRON',
+    'DOGE': 'Dogecoin',
+    'ADA': 'Cardano'
+}
 
 
 
