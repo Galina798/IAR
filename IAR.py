@@ -4,15 +4,15 @@ from tkinter import ttk
 from pycoingecko import CoinGeckoAPI
 from requests import RequestException
 
-# Подключаем API Coigecko.com
+# Подключаем API CoinGecko.com
 cg = CoinGeckoAPI()
 
 
 # изменение метки криптовалюты при выборе из комбобокса
 def update_cr_label(event):
-    cr_code = cr_combobox.get()
-    cr_name = cr_cur[cr_code]
-    cr_label.config(text = cr_name)
+    cr_code = cr_combobox.get()  # получение выбранного кода криптовалюты
+    cr_name = cr_cur[cr_code]  # получение полного названия по коду
+    cr_label.config(text = cr_name)  # обновление текста метки
 
 
 # список криптовалют
@@ -32,12 +32,12 @@ cr_cur = {
 
 # изменение метки валюты при выборе из комбобокса
 def update_t_label(event):
-    t_code = t_combobox.get()
-    t_name = t_cur[t_code]
-    t_label.config(text = t_name)
+    t_code = t_combobox.get()  # получение выбранного кода валюты
+    t_name = t_cur[t_code]  # получение полного названия по коду
+    t_label.config(text = t_name)  # обновление текста метки
 
 
-# переменная для выбора валют
+# словарь валют для конвертации
 t_cur = {
     'RUB': 'Российиский рубль',
     'USD': 'Американский доллар',
@@ -51,25 +51,28 @@ t_cur = {
 }
 
 
+# функция получения курса обмена
 def exchange():
     cr_code = cr_combobox.get()  # получаю данные о выбранной в комбобоксе криптовалюте
     t_code = t_combobox.get()   # получаю данные о выбранной в комбобоксе валюте
 
-    if not cr_code or not t_code:
-        mb.showwarning("Предупреждение", "Выберите криптовалюту и целевую валюту")
-        return
+    if not cr_code or not t_code:  # проверка выбора валют
+        mb.showwarning("Предупреждение", "Выберите криптовалюту и целевую валюту")  # предупреждение
+        return  # выход из функции
 
     # получаю полное название выбранных валют
-    cr_name = cr_cur.get(cr_code)
-    t_name = t_cur.get(t_code)
+    cr_name = cr_cur.get(cr_code)  # получение названия криптовалюты
+    t_name = t_cur.get(t_code)  # получение названия валюты
 
-    if not cr_name:
-        mb.showerror("Ошибка", f"Монета {cr_code} не поддерживается")
-        return
+    if not cr_name:  # проверка поддержки криптовалюты
+        mb.showerror("Ошибка", f"Монета {cr_code} не поддерживается")  # сообщение об ошибке
+        return  # выход из функции
 
     try:
-        price_dict = cg.get_price(ids=cr_name.lower(), vs_currencies=t_code.lower())
-        price = price_dict[cr_name.lower()][t_code.lower()]
+        # запрос к API для получения курса
+        price_dict = cg.get_price(ids=cr_name.lower(), vs_currencies=t_code.lower())  # получение данных о цене
+        price = price_dict[cr_name.lower()][t_code.lower()]  # извлечение цены из словаря
+        # отображение результата
         mb.showinfo("Курс обмена", f"1 {cr_name} ({cr_code}) = {price} {t_name} ({t_code})")
 
     # обработка возможных ошибок API запроса
@@ -87,38 +90,41 @@ def exchange():
         mb.showerror("Ошибка!", f"Произошла ошибка: {e}")
 
 
-# Интерфейс
-root = Tk()
-root.title("Курсы криптовалют")
-root.geometry("400x250")
-root.configure(bg = "#F5DEB3")
+# Создание интерфейса
+root = Tk()  # создание главного окна
+root.title("Курсы обмена криптовалют")  # установка заголовка окна
+root.geometry("400x250")  # установка размеров окна
+root.configure(bg = "#F5DEB3")  # установка цвета фона
 
-# выбор криптовалюты, курс которой требуется узнать
+# метка - выбор криптовалюты, курс которой требуется узнать
 ttk.Label(root, text = "Криптовалюта", foreground='#800000', background='#F5DEB3').pack(padx=10, pady=10)
 
-cr_combobox = ttk.Combobox(values = list(cr_cur.keys()))
-cr_combobox.pack(padx=10, pady=5)
-cr_combobox.bind("<<ComboboxSelected>>", update_cr_label)
+# комбобокс для выбора криптовалюты
+cr_combobox = ttk.Combobox(values = list(cr_cur.keys()))  # создание комбобокса с кодами криптовалют
+cr_combobox.pack(padx=10, pady=5)  # размещение комбобокса
+cr_combobox.bind("<<ComboboxSelected>>", update_cr_label)  # привязка события выбора
 
-cr_label = ttk.Label(root, text='', foreground='#800000', background='#F5DEB3')
-cr_label.pack(padx=10, pady=5)
+# метка для отображения названия криптовалюты
+cr_label = ttk.Label(root, text='', foreground='#800000', background='#F5DEB3')  # создание пустой метки
+cr_label.pack(padx=10, pady=5)  # размещение метки
 
-# выбор валюты для определения стоимости криптовалюты
+# метка - выбор валюты для определения стоимости криптовалюты
 ttk.Label(root, text = "Целевая валюта", foreground='#800000', background='#F5DEB3').pack(padx=10, pady=5)
 
-t_combobox = ttk.Combobox(values = list(t_cur.keys()))
-t_combobox.pack(padx=10, pady=5)
-t_combobox.bind("<<ComboboxSelected>>", update_t_label)
+# комбобокс для выбора целевой валюты
+t_combobox = ttk.Combobox(values = list(t_cur.keys()))  # создание комбобокса с кодами валют
+t_combobox.pack(padx=10, pady=5)  # размещение комбобокса
+t_combobox.bind("<<ComboboxSelected>>", update_t_label)  # привязка события выбора
 
-t_label = ttk.Label(root, text='', foreground='#800000', background='#F5DEB3')
-t_label.pack(padx=10, pady=5)
+# метка для отображения названия валюты
+t_label = ttk.Label(root, text='', foreground='#800000', background='#F5DEB3')  # создание пустой метки
+t_label.pack(padx=10, pady=5)  # размещение метки
 
 # кнопка "получить курс обмена"
-Button(text = "Получить курс обмена криптовалюты", command=exchange, fg='#800000', bg='#FFFFE0').pack(padx=10, pady=5)
+Button(text = "Получить курс обмена криптовалюты", command=exchange, fg='#800000', bg='#FFFFE0').pack(padx=10, pady=5)  # создание и размещение кнопки
 
 
-root.mainloop()
-
+root.mainloop()  # запуск главного цикла обработки событий
 
 
 
