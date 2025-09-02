@@ -1,16 +1,12 @@
-import requests
-import json
-import pprint
 from tkinter import *
 from tkinter import messagebox as mb
 from tkinter import ttk
 from pycoingecko import CoinGeckoAPI
+from requests import RequestException
 
-cg = CoinGeckoAPI(api_key="	CG-4JzufRVariWoroFZbvmtDhob")
+# Подключаем API Coigecko.com
+cg = CoinGeckoAPI()
 
-# просто пример получения цены дял биткоина, потом удалить
-# price_data = cg.get_price(ids='bitcoin', vs_currencies='usd')
-# print(price_data) # Вывод: {'bitcoin': {'usd': 19337.76}}
 
 # изменение метки криптовалюты при выборе из комбобокса
 def update_cr_label(event):
@@ -19,7 +15,21 @@ def update_cr_label(event):
     cr_label.config(text = cr_name)
 
 
-# Зашить неотображаемую функцию перевода USD в 10 любых базовых валют
+# список криптовалют
+cr_cur = {
+    'BTC': 'Bitcoin',
+    'ETH': 'Ethereum',
+    'USDT': 'Tether',
+    'XRP': 'Ripple',
+    'BNB': 'Binancecoin',
+    'SOL': 'Solana',
+    'USDC': 'Usd-coin',
+    'TRX': 'Tron',
+    'DOGE': 'Dogecoin',
+    'ADA': 'Cardano'
+}
+
+
 # изменение метки валюты при выборе из комбобокса
 def update_t_label(event):
     t_code = t_combobox.get()
@@ -27,30 +37,7 @@ def update_t_label(event):
     t_label.config(text = t_name)
 
 
-# функция курса валют по отношению к доллару
-# для возможности определения стоимости криптовалюты в других валютах
-def hidden_exchange_rate():
-    t_code = t_combobox.get()
-
-    if t_code:
-        try:
-            response = requests.get('https://open.er-api.com/v6/latest/USD')
-            response.raise_for_status()
-            data = response.json()
-            if t_code in data['hidden_rates']:
-                exchange_rate = data['hidden_rates'][t_code]
-                t_name = t_cur[t_code]
-                print("Курс обмена", f"Курс: {exchange_rate} {t_name} за 1 USD")
-            else:
-                mb.showerror("Ошибка!", f"Валюта {t_code} не найдена")
-
-        except Exception as e:
-            mb.showerror("Ошибка", f"Произошла ошибка: {e}")
-    else:
-        mb.showwarning("Внимание", "Введите код валюты!")
-
-
-# переменная для определения курса валют по отношению к доллару
+# переменная для выбора валют
 t_cur = {
     'RUB': 'Российиский рубль',
     'USD': 'Американский доллар',
@@ -58,8 +45,6 @@ t_cur = {
     'GBP': 'Британский фунт стерлингов',
     'JPY': 'Японская йена',
     'CNY': 'Китайский юань',
-    'KZT': 'Казахский тенге',
-    'UZS': 'Узбекский сум',
     'CHF': 'Швейцарский франк',
     'AED': 'Дирхам ОАЭ',
     'CAD': 'Канадский доллар',
@@ -67,28 +52,39 @@ t_cur = {
 
 
 def exchange():
-    hidden_exchange_rate()
-    cr_code = cr_combobox.get()
+    cr_code = cr_combobox.get()  # получаю данные о выбранной в комбобоксе криптовалюте
+    t_code = t_combobox.get()   # получаю данные о выбранной в комбобоксе валюте
 
+    if not cr_code or not t_code:
+        mb.showwarning("Предупреждение", "Выберите криптовалюту и целевую валюту")
+        return
 
+    # получаю полное название выбранных валют
+    cr_name = cr_cur.get(cr_code)
+    t_name = t_cur.get(t_code)
 
+    if not cr_name:
+        mb.showerror("Ошибка", f"Монета {cr_code} не поддерживается")
+        return
 
+    try:
+        price_dict = cg.get_price(ids=cr_name.lower(), vs_currencies=t_code.lower())
+        price = price_dict[cr_name.lower()][t_code.lower()]
+        mb.showinfo("Курс обмена", f"1 {cr_name} ({cr_code}) = {price} {t_name} ({t_code})")
 
-
-# список криптовалют
-cr_cur = {
-    'BTC': 'Bitcoin',
-    'ETH': 'Ethereum',
-    'USDT': 'Tether',
-    'XRP': 'XRP',
-    'BNB': 'BNB',
-    'SOL': 'Solana',
-    'USDC': 'USDC',
-    'TRX': 'TRON',
-    'DOGE': 'Dogecoin',
-    'ADA': 'Cardano'
-}
-
+    # обработка возможных ошибок API запроса
+    except ValueError:
+        mb.showerror("Ошибка!", "Произошла ошибка API(неверный ключ, лимиты)")
+    except TypeError:
+        mb.showerror("Ошибка!", "Введенная валюта не найдена")
+    except ConnectionError:
+        mb.showerror("Ошибка!", "Отсутствует интернет")
+    except TimeoutError:
+        mb.showerror("Ошибка!", "Долгий ответ сервера")
+    except RequestException as req_e:
+        mb.showerror("Ошибка!", f"Сетевая ошибка {req_e}")
+    except Exception as e:
+        mb.showerror("Ошибка!", f"Произошла ошибка: {e}")
 
 # Интерфейс
 root = Tk()
