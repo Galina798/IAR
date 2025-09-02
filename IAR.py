@@ -86,33 +86,36 @@ def exchange():
     except Exception as e:
         mb.showerror("Ошибка!", f"Произошла ошибка: {e}")
 
+
 # Интерфейс
 root = Tk()
 root.title("Курсы криптовалют")
 root.geometry("400x250")
+root.configure(bg = "#F5DEB3")
 
 # выбор криптовалюты, курс которой требуется узнать
-ttk.Label(text = "Криптовалюта").pack(padx=10, pady=10)
+ttk.Label(root, text = "Криптовалюта", foreground='#800000', background='#F5DEB3').pack(padx=10, pady=10)
 
 cr_combobox = ttk.Combobox(values = list(cr_cur.keys()))
 cr_combobox.pack(padx=10, pady=5)
 cr_combobox.bind("<<ComboboxSelected>>", update_cr_label)
 
-cr_label = ttk.Label()
+cr_label = ttk.Label(root, text='', foreground='#800000', background='#F5DEB3')
 cr_label.pack(padx=10, pady=5)
 
 # выбор валюты для определения стоимости криптовалюты
-ttk.Label(text = "Целевая валюта").pack(padx=10, pady=5)
+ttk.Label(root, text = "Целевая валюта", foreground='#800000', background='#F5DEB3').pack(padx=10, pady=5)
 
 t_combobox = ttk.Combobox(values = list(t_cur.keys()))
 t_combobox.pack(padx=10, pady=5)
 t_combobox.bind("<<ComboboxSelected>>", update_t_label)
 
-t_label = ttk.Label()
+t_label = ttk.Label(root, text='', foreground='#800000', background='#F5DEB3')
 t_label.pack(padx=10, pady=5)
 
 # кнопка "получить курс обмена"
-ttk.Button(text = "Получить курс обмена криптовалюты", command=exchange).pack(padx=10, pady=5)
+Button(text = "Получить курс обмена криптовалюты", command=exchange, fg='#800000', bg='#FFFFE0').pack(padx=10, pady=5)
+
 
 root.mainloop()
 
