@@ -68,6 +68,10 @@ def exchange():
         mb.showerror("Ошибка", f"Монета {cr_code} не поддерживается")  # сообщение об ошибке
         return  # выход из функции
 
+    if not t_name:  # проверка поддержки криптовалюты
+        mb.showerror("Ошибка", f"Монета {t_code} не поддерживается")  # сообщение об ошибке
+        return  # выход из функции
+
     try:
         # запрос к API для получения курса
         price_dict = cg.get_price(ids=cr_name.lower(), vs_currencies=t_code.lower())  # получение данных о цене
